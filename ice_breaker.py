@@ -3,12 +3,12 @@ from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from third_parties.linkedin import scrape_linkedin_data
+from agents import linkedin_lookup_agent
+from third_parties.linkedin import scrape_linkedin_data, scrape_linkedin_data_mock
 
 if __name__ == "__main__":
     load_dotenv()
-
-    information = scrape_linkedin_data(profile_url="")
+    linkedin_profile_url = linkedin_lookup_agent.lookup(name="NAMISH Kuchar Kal")
 
     prompt_template = """
         Given the information {information} about a person. I want you to create:
@@ -22,6 +22,9 @@ if __name__ == "__main__":
 
     chain = LLMChain(llm=llm, prompt=prompt)
 
-    result = chain.invoke(input={"information": information})
+    # linkedin_data = scrape_linkedin_data(profile_url=linkedin_profile_url)
+    linkedin_data = scrape_linkedin_data_mock()
+
+    result = chain.invoke(input={"information": linkedin_data})
 
     print(result["text"])
